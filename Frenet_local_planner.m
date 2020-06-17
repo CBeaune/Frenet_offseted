@@ -5,7 +5,17 @@ SetParams;
 
 #----Is pose within goal tolerance and/or iterations < SIM_LOOP ?
 ctr =0.0;
-while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance && ctr<SIM_LOOP
+theta = 0.0;
+c_x = 0.0;
+c_y = 0.0;
+ wx = main_route_x;
+ wy = main_route_y;
+plot(obstacle(1),obstacle(2),'xk');
+plot(main_route_x,main_route_y,'g');
+hold on;
+non_new_plan = 1;
+endpoint_reached = 0;
+while hypot(c_x-main_route_x(end),c_y-main_route_y(end))>goal_tolerance && ctr<SIM_LOOP
   
   
   ## the buffer zone around the robot is : 
@@ -25,32 +35,50 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance && ctr<SIM_LOOP
   # Is there an obstacle in the global path ?
   [bool_obstacle,closest_ob] = check_obstacle(c_x,c_y,obstacle);
   
-  if bool_obstacle == 0
+  if bool_obstacle == 0 
      #no --> follow global plan 
      local_plan = follow_global_plan(c_x,c_y,wx,wy);
      
-   else
-     #yes --> compute local plan
-     local_plan = frenet_local_plan(c_x,c_y,wx,wy,closest_ob);
-     
-     for position = local_plan
-       #check if there is any obstacle in the local path
-       ok_path = check_obstacle(position(1),position(2),obstacle);
+   elseif bool_obstacle == 1
+     if non_new_plan ==1
        
-       if ok_path == 0
-         #no ---> follow local plan
-         
-       else
-         #yes ---> compute another local plan
-         local_plan = new_local_plan(c_x,c_y,wx,wy);
-         
-       endif
-     endfor
+     [xSpline,ySpline] = computeSpline(c_x,c_y,wx,wy,obstacle,theta);
+     plot(xSpline,ySpline,'b--')
+     wx = xSpline;
+     wy = ySpline;
+     [local_plan,endpoint_reached] = follow_global_plan(c_x,c_y,wx,wy);
+     non_new_plan = 0;
+     
+%   else
+%     if endpoint_reached == 0
+%      [local_plan,endpoint_reached] = follow_global_plan(c_x,c_y,wx,wy);
+%     else
+%      bool_obstacle = 0;
+%      non_new_plan = 1;
+%      endpoint_reached =0;
+%      wx = main_route_x;
+%      wy = main_route_y;
+%    endif
+    
+       
+       
+   endif
+   
+     
   endif
-  c_x = local_plan(2,1);
+  
+  prev_x = c_x;
+  prev_y = c_y;
+  plot(c_x,c_y,'ro');
+  hold on;
+  plot(local_plan(1,2:end),local_plan(2,2:end),'b-');
+  hold on;
+  c_x = local_plan(1,2);
   c_y = local_plan(2,2);
+  theta = atan2(c_x-prev_x,c_y-prev_y);
  ctr++;
 endwhile
+
 
 
 
