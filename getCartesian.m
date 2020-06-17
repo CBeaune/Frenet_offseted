@@ -16,7 +16,7 @@ function [x,y] = getCartesian(s,d,wx,wy)
     prev_wp=prev_wp-length(wx)+1;
   endif
   
-  wp2 = mod((prev_wp+1),length(maps_s));
+  wp2 = mod((prev_wp+1),length(maps_s))+1;
 
 	heading = atan2((wy(wp2)-wy(prev_wp)),(wx(wp2)-wx(prev_wp)));
 	# the x,y,s along the segment
