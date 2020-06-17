@@ -1,13 +1,13 @@
-function [X,Y] = computeSpline(c_x,c_y,wx,wy,closest_ob,theta)
+function [X,Y] = computeSpline(c_x,c_y,wx,wy,closest_ob)
   local_plan = [];
   #spline interpolation
   [c_s,c_d] = getFrenet(c_x,c_y,wx,wy,0.0);
   [s1 , d1] = getFrenet(closest_ob(1),closest_ob(2),wx,wy,0.0);
-  d1
+
   if d1<0
-    d1=-d1-0.5;
+    d1=-1;
   else
-    d1=-d1+0.5;
+    d1=1;
   endif
   
   
