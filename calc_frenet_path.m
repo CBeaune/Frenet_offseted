@@ -1,15 +1,16 @@
 ##follow global plan
-function [local_plan,sp,sp2]= calc_frenet_path(c_s,c_d, bool_collision,sp,sp2,n_lane)
+function [local_plan,sp,sp2]= calc_frenet_path(c_s,c_d, bool_collision,sp,sp2,
+  n_lane)
 
 
   s0 = c_s;
-  sf = s0+0.75;
+  sf = s0+sqrt(2);
   local_plan = FrenetPath;
   local_plan.s = s0:0.01:sf;
   df = 0.5*n_lane; %put in a param file
   
   
-  if bool_collision == 0
+  if bool_collision == 0  
     if abs(c_d)<0.01
       local_plan.d = zeros(1,length(local_plan.s));
       sp = [];
@@ -34,7 +35,6 @@ function [local_plan,sp,sp2]= calc_frenet_path(c_s,c_d, bool_collision,sp,sp2,n_
 else
   
   if isempty(sp) == 0   #already a local plan that has been computed --> just 
-    #follow offset
     [val,index] = min(abs(sp-c_d));
     df = sp(end);
     #get previous plan

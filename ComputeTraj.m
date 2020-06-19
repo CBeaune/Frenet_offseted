@@ -19,7 +19,7 @@ function [wxl,wyl,wxr,wyr] = ComputeTraj(wx,wy)
     wyl = [wyl, wy(end)+0.5*cos(theta)];
     
     
-  plot(wx,wy);
+  plot(wx,wy,'b');
   hold on;
   plot(wxr,wyr,'g');
   hold on;
