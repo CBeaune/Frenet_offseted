@@ -6,7 +6,7 @@ function [local_plan,sp,sp2]= calc_frenet_path(c_s,c_d, bool_collision,sp,sp2,
   s0 = c_s;
   sf = s0+sqrt(2);
   local_plan = FrenetPath;
-  local_plan.s = s0:0.01:sf;
+  local_plan.s = s0:0.1:sf;
   df = 0.5*n_lane; %put in a param file
   
   

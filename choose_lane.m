@@ -8,7 +8,7 @@ function [n_lane,stop_plan] = choose_lane(c_d,obstacle,wx,wy,n_lane)
   
   [~,d_obst] = getFrenet(obstacle(1),obstacle(2),wx,wy,0.0);
   prev_n_lane = n_lane;
-  if d_obst<c_d
+  if d_obst<=c_d
     n_lane = -1;
   else
     n_lane = 1;

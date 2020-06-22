@@ -16,8 +16,9 @@ goal_tolerance = 0.105 ;
 robot_radius = 0.105;
 
 
-wx = 0.0:0.1:5.0 ;
-wy = cos(1-wx/4);  
+wx = 0.0:1:5.0 ;
+wy = cos(1-wx/4); 
+[wx,wy] = getGlobalPlan(wx,wy); 
 
-obstacle = [ 2 ;
-             cos(1/2)] ;
+obstacle = [ 2  2.1 ;
+             cos(1/2) cos(1-2.1/4)+0.5] ;

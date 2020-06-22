@@ -1,5 +1,5 @@
 #check obstacle collision
-function [bool_obstacle, closest_ob] = check_obstacle(c_x,c_y,yaw,local_plan,
+function [bool_obstacle, closest_ob] = check_obstacle_global(c_x,c_y,yaw,local_plan,
   obstacle)
   SetParams;
   

@@ -77,10 +77,10 @@ CD = line ([C_x D_x], [C_y D_y], "linestyle", "--", "color", "r");
 DA = line ([D_x A_x], [D_y A_y], "linestyle", "--", "color", "r");
 
 hold on;
-
+j = plot(local_plan.x,local_plan.y);
 
 while (hypot(c_x-wx(end),c_y-wy(end))>0.105 && !stop_plan)
- 
+ delete(j);
 delete(AB0);delete(B_C0);delete(CD0);delete(DA0);
 delete(AB);delete(B_C);delete(CD);delete(DA);
 
@@ -137,23 +137,31 @@ CD = line ([C_x D_x], [C_y D_y], "linestyle", "--", "color", "r");
 DA = line ([D_x A_x], [D_y A_y], "linestyle", "--", "color", "r");
 
 hold on;
-j = plot(local_plan.x,local_plan.y,'r--');
 
-t = linspace(0,2*pi,100)'; 
+
+t = linspace(
+0,2*pi,100)'; 
 circsx = 0.105.*cos(t) + c_x; 
 circsy = 0.105.*sin(t) + c_y; 
 k =  plot(circsx,circsy,'r'); 
 plot(c_x,c_y,'xr');
+j = plot(local_plan.x,local_plan.y,'r',"Linewidth",2);
 
 
-
-[bool_obstacle,closest_ob] = check_obstacle(c_x,c_y,yaw,local_plan,obstacle);
+[bool_obstacle,closest_ob] = check_obstacle_global(c_s,c_x,c_y,yaw,local_plan,obstacle);
 
 [n_lane,stop_plan] = choose_lane(c_d,closest_ob,wx,wy,n_lane);
  %tic();
 [local_plan,local_plan.sp,local_plan.sp2] = calc_frenet_path(c_s,c_d,
     bool_obstacle,local_plan.sp,local_plan.sp2,n_lane);
+stop_planning = check_obstacle_local(c_x,c_y,yaw,obstacle,closest_ob,n_lane);
+if stop_planning == 1.0
+  text (2, 0, "local plan stopped due to collisions conflicts");
+  return;
+endif
+
 local_plan = calc_global_path(local_plan,wx,wy);
+
 %toc();
 
 c_x = local_plan.x(2);
@@ -161,9 +169,9 @@ c_y = local_plan.y(2);
 yaw = local_plan.yaw(2);
 c_s = local_plan.s(2);
 c_d = local_plan.d(2);
-pause(0.001)
-delete(j);
-delete(k)
+%delete(j);
+delete(k);
+pause(0.1)
 
 
 
@@ -181,3 +189,5 @@ circsy = 0.105.*sin(t) + wy(end);
 %circsy = 0.105.*sin(t) + c_y; 
 % plot(circsx,circsy,'r');
 % plot(c_x,c_y,'rx');
+
+
