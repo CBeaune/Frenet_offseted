@@ -5,15 +5,26 @@
 %clc
 %clf
 
-function path = AStar(MAP,c_d)
+function path = AStar(MAP,c_d,M,N,d_sample,dmax)
 
 %Define Number of Nodes
-xmax = 20;
-ymax = 3;
+xmax = M;
+ymax = N;
+nb = -dmax:d_sample:dmax;
+
 %Start and Goal
-start_d = floor((c_d+0.5)/0.25)-1;
+for index = 1:length(nb)-1
+      if nb(index) <= c_d && c_d<= nb(index+1)
+        start_d = index;
+        continue;
+      endif
+    endfor
+ 
+
 start = [1,start_d];
-goal = [xmax,2];
+goal = [xmax,ceil(N/2)];
+
+
 %Nodes
 %MAP = zeros(xmax,ymax);
 %%To define objects, set their MAP(x,y) to inf
@@ -25,7 +36,7 @@ goal = [xmax,2];
 %MAP(35:40,25) = inf;
 
 %Heuristic Weight%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-weight = sqrt(2); %Try 1, 1.5, 2, 2.5
+weight = sqrt(2.5); %Try 1, 1.5, 2, 2.5
 %Increasing weight makes the algorithm greedier, and likely to take a
 %longer path, but with less computations.
 %weight = 0 gives Djikstra algorithm
@@ -35,6 +46,11 @@ for x = 1:size(MAP,1)
     for y = 1:size(MAP,2)
         if(MAP(x,y)~=inf)
             H(x,y) = weight*norm(goal-[x,y]);
+            %For d_sample = 0.25, a good heuristic is :
+            %H(x,y) = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x));
+            
+            %For d_sample > 0.25 :
+            
             G(x,y) = inf;
         endif
     endfor
@@ -57,7 +73,7 @@ openNodes = [start G(start(1),start(2)) F(start(1),start(2)) 0]; %[x y G F cameF
 solved = false;
 while(~isempty(openNodes))
     
-    pause(0.001)
+    %pause(0.001)
     
     %find node from open set with smallest F value
     [A,I] = min(openNodes(:,4));
