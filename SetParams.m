@@ -20,8 +20,8 @@ wx = 0.0:1:5 ;
 wy = cos(1-wx/4); 
 [wx,wy] = getGlobalPlan(wx,wy); 
 
-obstacle = [  2 3 ;
-              cos(1-2/4)+0.1  cos(1-3/4)-0.1] ;
+obstacle = [  2 2.5 ;
+              cos(1-2/4)+0.1  cos(1-2.5/4)-0.1] ;
              
            
 %obstacle = [ 2  2  2;
