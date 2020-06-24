@@ -24,6 +24,19 @@ for index = 1:length(nb)-1
 start = [1,start_d];
 goal = [xmax,ceil(N/2)];
 
+k = 0;
+while ceil(N/2)+k < N && ceil(N/2)-k >1
+  if MAP(xmax,ceil(N/2)+k)~= inf
+    goal = [xmax,ceil(N/2)+k];
+    break;
+  elseif MAP(xmax,ceil(N/2)-k)~= inf
+    goal = [xmax,ceil(N/2)-k];
+    break;
+  endif
+  k++;
+endwhile
+
+
 
 %Nodes
 %MAP = zeros(xmax,ymax);
@@ -45,11 +58,10 @@ weight = sqrt(2.5); %Try 1, 1.5, 2, 2.5
 for x = 1:size(MAP,1)
     for y = 1:size(MAP,2)
         if(MAP(x,y)~=inf)
-            H(x,y) = weight*norm(goal-[x,y]);
+            %H(x,y) = weight*norm(goal-[x,y]);
             %For d_sample = 0.25, a good heuristic is :
-            %H(x,y) = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x));
+            H(x,y) = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x));
             
-            %For d_sample > 0.25 :
             
             G(x,y) = inf;
         endif
@@ -60,7 +72,7 @@ endfor
 %colormap(gray)
 %view(2)
 %hold all
-%plot(start(1),start(2),'s','MarkerFaceColor','b')
+%plot(start(1),start(2),'s','MarkerFaceColor','r')
 %plot(goal(1),goal(2),'s','MarkerFaceColor','m')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %initial conditions%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +85,7 @@ openNodes = [start G(start(1),start(2)) F(start(1),start(2)) 0]; %[x y G F cameF
 solved = false;
 while(~isempty(openNodes))
     
-    %pause(0.001)
+    pause(0.001)
     
     %find node from open set with smallest F value
     [A,I] = min(openNodes(:,4));

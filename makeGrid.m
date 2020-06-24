@@ -1,6 +1,7 @@
 #make occupancy grid based on Frenet coordinates
 
-function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample)
+function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample,infl_dist_side,
+  infl_dist_front,infl_dist_back,robot_radius)
   ds = s_sample;
   s_hor = 2.0;
   dmax = 0.75;
@@ -8,15 +9,19 @@ function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample)
   M = s_hor/ds;
   N = (dmax)/dd;
   
+  n_infl_side = ceil((infl_dist_side+robot_radius)/d_sample);
+  n_infl_front = ceil((infl_dist_front+robot_radius)/ds);
+  n_infl_back = ceil((infl_dist_back+robot_radius)/ds);
+  
   nb = -dmax:d_sample:dmax;
   
   gr = zeros(M,N);
   for obst = obstacle 
     %Convert from Frenet to matrix index
-    [s,d] = getFrenet(obst(1),obst(2),wx,wy,0.0);
+    [s_obst,d_obst] = getFrenet(obst(1),obst(2),wx,wy,0.0);
     for index = 1:length(nb)-1
-      if nb(index) <= d && d<= nb(index+1)
-        j = index;
+      if nb(index) <= d_obst && d_obst<= nb(index+1)
+        y = index;
         continue;
       endif
       
@@ -24,21 +29,26 @@ function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample)
     endfor
     
     
-    k = floor((s-c_s)/ds)+1;
-    if (1<=j && j<=N && 1<=k && k<=M)
-      for n=k-6:k+2
-        for m = j-2:j+2   %can be put in a variable as dist_inflation
-          if (n<1||n>N||m<1||m>M)
+    x = floor((s_obst-c_s)/ds)+1;
+    if (1<=y && y<=N && 1<=x && x<=M)
+      
+      gr(x,y) =  inf; 
+      for d = y-n_infl_side:y+n_infl_side
+        for s = x-n_infl_front:x+n_infl_back   %can be put in a variable as dist_inflation
+          if (d<1||d>N||s<1||s>M)
                 continue
+              else
+                gr(s,d) =  inf; 
             endif
-          gr(n,m) =  inf; 
+          
         endfor
       endfor
       
     endif
     
   endfor
-  
+ 
+% gr =gr
 
 %  plot(gr,'x')
 %  grid on;
