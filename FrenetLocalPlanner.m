@@ -59,7 +59,7 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
      path(i,2) = -dmax+d_sample/2*(2*path(i,2)-1);
      path(i,1) = path(i,1)*s_sample+c_s;
   endfor
-  
+  test_path = path;
   local_plan = FrenetPath;
   
   %-----Smooth the path --------------------------------------------------------
@@ -67,20 +67,20 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
 %  dspline = spline(path(:,1),path(:,2),sspline);
 %  path = [ssplie
   path = PathSmoothing(path);
-  sspline = path(1,1):s_sample:path(end,1);
+  sspline = path(1,1):n_s_local:path(end,1);
   dspline = spline(path(:,1),path(:,2),sspline);
   
-  
+  index = ceil(1/n_s_local*s_sample)+1;
   local_plan.s = sspline;
-  c_s = local_plan.s(2);
+  c_s = local_plan.s(index);
   local_plan.d = -dspline;
-  c_d = -local_plan.d(2);
+  c_d = -local_plan.d(index);
   
   %-----Compute from Frenet coordinates to Cartesian coordinates----------------
   local_plan = calc_global_path(local_plan,wx,wy);
-  c_x = local_plan.x(2);
-  c_y = local_plan.y(2);
-  yaw = local_plan.yaw(2);
+  c_x = local_plan.x(index);
+  c_y = local_plan.y(index);
+  yaw = local_plan.yaw(index);
   
   %-----Plotting----------------------------------------------------------------
   
@@ -92,7 +92,7 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   k =  plot(circsx,circsy,'r'); 
   l = plot(c_x,c_y,'xr');
   hold on;
-  j = plot(local_plan.x,local_plan.y,'r-',"Linewidth",2);
+  j = plot(local_plan.x,local_plan.y,'r-o',"Linewidth",2,'markerfacecolor','r');
   A_x = -(infl_dist_back+robot_radius)*cos(yaw)+...
   (infl_dist_side+robot_radius)*sin(yaw)+c_x;
   A_y = -(infl_dist_back+robot_radius)*sin(yaw)-...

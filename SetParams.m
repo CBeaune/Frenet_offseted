@@ -54,11 +54,12 @@ dmax = 0.75;                 % d_max = 0.75 si on a mis les offsets à 0.5m
 
 infl_dist_side = 0.08; 
              %dist to obstacle from side should be robot_radius+infl_dist_side
-infl_dist_front = 0.18;
+infl_dist_front = 0.12;
              %dist to obstacle from front should be robot_radius+infl_dist_front
 infl_dist_back = 0.1; 
              %dist to obstacle from back should be robot_radius+infl_dist_back
-               
+n_s_local = s_sample/4;
+             %interval between two values in local plan             
                
 %------- Set obstacles along the global trajectory -----------------------------
 
