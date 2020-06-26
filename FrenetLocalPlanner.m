@@ -75,21 +75,20 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
 %  dspline = spline(path(:,1),path(:,2),sspline);
 %  path = [ssplie
   path = PathSmoothing(path);
-  sspline = path(1,1):s_sample:path(end,1);
+  sspline = path(1,1):n_s_local:path(end,1);
   dspline = spline(path(:,1),path(:,2),sspline);
   
-  
+  index = ceil(1/n_s_local*s_sample)+1;
   local_plan.s = sspline;
-  c_s = local_plan.s(2);
+  c_s = local_plan.s(index);
   local_plan.d = -dspline;
-  c_d = -local_plan.d(2);
-  
+  c_d = -local_plan.d(index);
   
   %-----Compute from Frenet coordinates to Cartesian coordinates----------------
   local_plan = calc_global_path(local_plan,wx,wy);
-  c_x = local_plan.x(2);
-  c_y = local_plan.y(2);
-  yaw = local_plan.yaw(2);
+  c_x = local_plan.x(index);
+  c_y = local_plan.y(index);
+  yaw = local_plan.yaw(index);               
   
   
 %-----Calc curvature for the local path --------------------------------------

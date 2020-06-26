@@ -59,7 +59,8 @@ infl_dist_front = 0.18;
              %dist to obstacle from front should be robot_radius+infl_dist_front
 infl_dist_back = 0.1; 
              %dist to obstacle from back should be robot_radius+infl_dist_back
-               
+ n_s_local = s_sample/4;
+             %interval between two values in local plan                 
                
 %------- Set obstacles along the global trajectory -----------------------------
 
