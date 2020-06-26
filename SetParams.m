@@ -4,10 +4,11 @@
 
 linear_vel = 0.22;      %linear velocity of the robot (m/s)
 robot_radius = 0.105;   % radius (m)
+max_curvature = 5;
 
 %------- Set global trajectory -------------------------------------------------
 
-wx = 0.0:1:5 ;                      %cartesian x coordinates (m)
+wx = 0.0:1:6 ;                      %cartesian x coordinates (m)
 wy = cos(1-wx/4);                   %cartesian y coordinates (m)
 [wx,wy] = getGlobalPlan(wx,wy);     % compute a waypoint every ds = 0.1m
 
@@ -63,10 +64,10 @@ infl_dist_back = 0.1;
 %------- Set obstacles along the global trajectory -----------------------------
 
 
-obstacle = [1 1.1 1.2 4 ;                           
-            cos(1-1/4)-0.1  cos(1-1.1/4) cos(1-1.2/4) cos(1-4/4)+0.1] ;  
+obstacle = [1 1.5 3 3.2 ;                           
+            cos(1-1/4)-0.1  cos(1-1.5/4)+0.1 cos(1-3/4)+0.1 cos(1-3.2/4)-0.1] ;  
             
             
 %------- Plotting parameters ---------------------------------------------------
 
-speed_display = 4;
+speed_display = 2;

@@ -7,6 +7,7 @@ classdef FrenetPath
       d = []
       sp = []
       sp2 = []
+      curv = []
    end
    methods
       
