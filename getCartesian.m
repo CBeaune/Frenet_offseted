@@ -1,5 +1,5 @@
 #getCartesianfunction
-function [x,y] = getCartesian(s,d,wx,wy)
+function [x,y,heading] = getCartesian(s,d,wx,wy)
   maps_s = [0.0];
   for i=2:length(wx)
     si  = maps_s(i-1)+hypot(wx(i)-wx(i-1),wy(i)-wy(i-1));

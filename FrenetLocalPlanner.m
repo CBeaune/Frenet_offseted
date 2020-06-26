@@ -143,7 +143,7 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
       "goal position"},'Location','southwest');
       
   title(['Local planning start ! Speed is ' num2str(linear_vel),...
-    ' m/s'  ' (speed display x'  num2str(speed_display)  ')' ]) 
+    ' m/s'  ])%' (speed display x'  num2str(speed_display)  ')' ]) 
   if max_curv>max_curvature 
     r = text (2, 2.5, ["max local curvature = ",num2str(max_curv),...
     " >  max curvature =  " ,num2str(max_curvature)],'Color', 'r' ); 
