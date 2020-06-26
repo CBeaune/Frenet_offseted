@@ -82,6 +82,11 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   c_y = local_plan.y(index);
   yaw = local_plan.yaw(index);
   
+  %-----Calc curvature for the local path --------------------------------------
+  local_plan.curv = calc_curvature(local_plan);
+  max_curv = max(local_plan.curv);
+  
+  
   %-----Plotting----------------------------------------------------------------
   
   delete(j);delete(k);
