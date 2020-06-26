@@ -41,6 +41,7 @@ axis equal;
   
   j = plot(0,0);
   k = plot(0,0);
+  r = plot(0,0);
 
 ################################################################################  
 
@@ -89,7 +90,7 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   
   %-----Plotting----------------------------------------------------------------
   
-  delete(j);delete(k);
+  delete(j);delete(k);delete(r);
   delete(AB);delete(B_C);delete(CD);delete(DA);
   t = linspace(0,2*pi,100)'; 
   circsx = robot_radius.*cos(t) + c_x; 
@@ -133,7 +134,14 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
       
   title(['Local planning start ! Speed is ',num2str(linear_vel),...
     ' m/s', ' (speed display x', num2str(speed_display), ')'])    
-      
+   
+  if max_curv>max_curvature 
+    r = text (2, 2.5, ["max local curvature = ",num2str(max_curv),...
+    " >  max curvature =  " ,num2str(max_curvature)],'Color', 'r' ); 
+    
+  else
+    r = text (2, 2.5, ["max local curvature is : ",num2str(max_curv)] );
+  endif  
   pause(0.2/(speed_display*linear_vel));
 endwhile
 ################################################################################

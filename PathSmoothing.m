@@ -5,9 +5,9 @@ optPath=path;%元のパスをコピー
 alpha=0.5;
 beta=0.2;
 
-torelance=0.00001;%パスの変化量の閾値(変化量がこの値以下の時平滑化を終了)
-change=torelance;%パスの位置の変化量
-while change>=torelance 
+tolerance=0.00001;%パスの変化量の閾値(変化量がこの値以下の時平滑化を終了)
+change=tolerance;%パスの位置の変化量
+while change>=tolerance 
     change=0;%初期化
     for ip=2:(length(path(:,1))-1) %始点と終点は固定
         prePath=optPath(ip,:);%変化量計測用
