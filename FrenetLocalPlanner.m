@@ -162,7 +162,7 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   endif
 
       
-  %pause(0.2/(speed_display*linear_vel));
+  pause(0.5);
 
 endwhile
 ################################################################################

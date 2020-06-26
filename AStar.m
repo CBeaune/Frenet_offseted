@@ -61,7 +61,7 @@ for x = 1:size(MAP,1)
         if(MAP(x,y)~=inf)
             %H(x,y) = weight*norm(goal-[x,y]);
             %For d_sample = 0.25, a good heuristic is :
-            H(x,y) = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x));
+            H(x,y) = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x)+ abs((1/d_sample-1/y)));
             
             
             G(x,y) = inf;
@@ -116,33 +116,24 @@ while(~isempty(openNodes))
             endif
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            %if curvature>max_curvature skip
-            s_1 = ((closedNodes(end,1)-1)*s_sample)+c_s;
-            d_1 = -dmax+d_sample/2*(2*closedNodes(end,2)-1);
-            [x_1,y_1] = getCartesian(s_1,d_1,wx,wy);
-            
-            s0 = ((current(1)-1)*s_sample)+c_s;
-            d0 = -dmax+d_sample/2*(2*current(2)-1);
-            [x0,y0] = getCartesian(s0,d0,wx,wy);
-            
-            s1 = ((x-1)*s_sample)+c_s;
-            d1 = -dmax+d_sample/2*(2*y-1);
-            [x1,y1] = getCartesian(s1,d1,wx,wy);
-            
-            yaw0 = atan2(y0-y_1,x0-x_1);
-            yaw1 = atan2(y1-y0,x1-x0);
-            ds = s1-s0;
-        
-            if ds>0  && abs(yaw1-yaw0)<pi/2
-              curvature = (yaw1-yaw0)/(s1-s0);
-              %k = [k,curvature];
-              if abs(curvature) > max_curvature
-                 continue
-              else
-                 abs(curvature);
-               endif
-               
-            endif
+%%%%            %if curvature>max_curvature skip
+%            s_1 = ((closedNodes(end,1)-1)*s_sample)+c_s;
+%            d_1 = -dmax+d_sample/2*(2*closedNodes(end,2)-1);
+%            %[x_1,y_1] = getCartesian(s_1,d_1,wx,wy);
+%            
+%            s0 = ((current(1)-1)*s_sample)+c_s;
+%            d0 = -dmax+d_sample/2*(2*current(2)-1);
+%            %[x0,y0] = getCartesian(s0,d0,wx,wy);
+%            
+%            s1 = ((x-1)*s_sample)+c_s;
+%            d1 = -dmax+d_sample/2*(2*y-1);
+%            %[x1,y1] = getCartesian(s1,d1,wx,wy);
+%            %R = circumcenter([x_1,y_1,0],[x0,y0,0],[x1,y1,0]);
+%            R = circumcenter([s_1,d_1,0],[s0,d0,0],[s1,d1,0]);
+%            
+%            if R < 1/max_curvature
+%              continue               
+%            endif
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
             
