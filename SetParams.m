@@ -4,7 +4,7 @@
 
 linear_vel = 0.22;      %linear velocity of the robot (m/s)
 robot_radius = 0.105;   % radius (m)
-max_curvature = 10.0;
+max_curvature = 5.0;    % max curvature (1/m)
 
 %------- Set global trajectory -------------------------------------------------
 
@@ -55,11 +55,11 @@ dmax = 0.75;                 % d_max = 0.75 si on a mis les offsets à 0.5m
 
 infl_dist_side = 0.08; 
              %dist to obstacle from side should be robot_radius+infl_dist_side
-infl_dist_front = 0.12;
+infl_dist_front = 0.1;
              %dist to obstacle from front should be robot_radius+infl_dist_front
 infl_dist_back = 0.1; 
              %dist to obstacle from back should be robot_radius+infl_dist_back
-n_s_local = s_sample;
+n_s_local = s_sample/2 ;
              %interval between two values in local plan             
                
 %------- Set obstacles along the global trajectory -----------------------------

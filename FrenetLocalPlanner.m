@@ -67,9 +67,9 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
 %  sspline = c_s:0.03:c_s+2.0;
 %  dspline = spline(path(:,1),path(:,2),sspline);
 %  path = [ssplie
-  path = PathSmoothing(path);
-  sspline = path(1,1):n_s_local:path(end,1);
-  dspline = spline(path(:,1),path(:,2),sspline);
+ path = PathSmoothing(path);
+ sspline = path(:,1);%:n_s_local:path(end,1);
+ dspline = path(:,2);%spline(path(:,1),path(:,2),sspline);
   
   index = ceil(1/n_s_local*s_sample)+1;
   local_plan.s = sspline;
