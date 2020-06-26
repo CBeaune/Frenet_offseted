@@ -4,7 +4,7 @@
 
 linear_vel = 0.22;      %linear velocity of the robot (m/s)
 robot_radius = 0.105;   % radius (m)
-max_curvature = 5;
+max_curvature = 1;
 
 %------- Set global trajectory -------------------------------------------------
 
@@ -59,7 +59,7 @@ infl_dist_front = 0.18;
              %dist to obstacle from front should be robot_radius+infl_dist_front
 infl_dist_back = 0.1; 
              %dist to obstacle from back should be robot_radius+infl_dist_back
- n_s_local = s_sample/4;
+ n_s_local = s_sample;
              %interval between two values in local plan                 
                
 %------- Set obstacles along the global trajectory -----------------------------
@@ -71,4 +71,4 @@ obstacle = [1 1.5 3 3.2 ;
             
 %------- Plotting parameters ---------------------------------------------------
 
-speed_display = 2;
+speed_display = 5;

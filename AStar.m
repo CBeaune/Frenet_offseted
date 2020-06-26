@@ -5,7 +5,8 @@
 %clc
 %clf
 
-function path = AStar(MAP,c_d,M,N,d_sample,dmax)
+function path = AStar(MAP,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,...
+  max_curvature)
 
 %Define Number of Nodes
 xmax = M;
@@ -113,6 +114,26 @@ while(~isempty(openNodes))
             if (x<1||x>xmax||y<1||y>ymax)
                 continue
             endif
+            
+            %if curvature>max_curvature skip
+%            
+%            s0 = ((current(1)-1)*s_sample)+c_s;
+%            d0 = -dmax+d_sample/2*(2*current(2)-1);
+%            [x0,y0] = getCartesian(s0,d0,wx,wy);
+%            s1 = ((x-1)*s_sample)+c_s;
+%            d1 = -dmax+d_sample/2*(2*y-1);
+%            [x1,y1] = getCartesian(s1,d1,wx,wy);
+%            yaw = atan2(y1-y0,x1-x0);
+%            ds = s1-s0;
+%            if ds>0
+%              curvature = yaw/(s1-s0);
+%              if curvature > max_curvature
+%                 continue
+%               endif
+%               
+%            endif
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
             
             %if object skip
             if (isinf(MAP(x,y)))

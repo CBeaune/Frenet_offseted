@@ -58,7 +58,9 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   
   
   %----- use A* algorithm to pass the obstacle ---------------------------------
-  path = AStar(gr,c_d,M,N,d_sample,dmax);
+%  path = AStar(gr,c_d,M,N,d_sample,dmax);
+%  
+  path = AStar(gr,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,max_curvature);
   
   
   %-----Convert from matrix index to Frenet coordinates-------------------------
@@ -106,7 +108,7 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   k =  plot(circsx,circsy,'r'); 
   l = plot(c_x,c_y,'xr');
   hold on;
-  j = plot(local_plan.x,local_plan.y,'r-',"Linewidth",2);
+  j = plot(local_plan.x,local_plan.y,'r-o',"Linewidth",2,"markerfacecolor",'r');
   A_x = -(infl_dist_back+robot_radius)*cos(yaw)+...
   (infl_dist_side+robot_radius)*sin(yaw)+c_x;
   A_y = -(infl_dist_back+robot_radius)*sin(yaw)-...
