@@ -5,7 +5,8 @@
 %clc
 %clf
 
-function path = AStar(MAP,c_d,M,N,d_sample,dmax)
+function path = AStar(MAP,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,...
+  max_curvature)
 
 %Define Number of Nodes
 xmax = M;
@@ -49,7 +50,7 @@ endwhile
 %MAP(35:40,25) = inf;
 
 %Heuristic Weight%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-weight = sqrt(2.5); %Try 1, 1.5, 2, 2.5
+weight = sqrt(3); %Try 1, 1.5, 2, 2.5
 %Increasing weight makes the algorithm greedier, and likely to take a
 %longer path, but with less computations.
 %weight = 0 gives Djikstra algorithm
@@ -104,7 +105,7 @@ while(~isempty(openNodes))
     %remove current node from open set and add it to closed set
     openNodes(I,:) = [];
     closedNodes = [closedNodes;current];
-    
+   % k = [];
     %for all neighbors of current node
     for x = current(1)-1:current(1)+1
         for y = current(2)-1:current(2)+1
@@ -113,6 +114,37 @@ while(~isempty(openNodes))
             if (x<1||x>xmax||y<1||y>ymax)
                 continue
             endif
+            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            %if curvature>max_curvature skip
+            s_1 = ((closedNodes(end,1)-1)*s_sample)+c_s;
+            d_1 = -dmax+d_sample/2*(2*closedNodes(end,2)-1);
+            [x_1,y_1] = getCartesian(s_1,d_1,wx,wy);
+            
+            s0 = ((current(1)-1)*s_sample)+c_s;
+            d0 = -dmax+d_sample/2*(2*current(2)-1);
+            [x0,y0] = getCartesian(s0,d0,wx,wy);
+            
+            s1 = ((x-1)*s_sample)+c_s;
+            d1 = -dmax+d_sample/2*(2*y-1);
+            [x1,y1] = getCartesian(s1,d1,wx,wy);
+            
+            yaw0 = atan2(y0-y_1,x0-x_1);
+            yaw1 = atan2(y1-y0,x1-x0);
+            ds = s1-s0;
+        
+            if ds>0  && abs(yaw1-yaw0)<pi/2
+              curvature = (yaw1-yaw0)/(s1-s0);
+              %k = [k,curvature];
+              if abs(curvature) > max_curvature
+                 continue
+              else
+                 abs(curvature);
+               endif
+               
+            endif
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
             
             %if object skip
             if (isinf(MAP(x,y)))
@@ -192,8 +224,9 @@ else
 endif
 
 %figure(2)
-%xspline = 2:0.1:xmax;
-%yspline = spline(path(:,1),path(:,2),xspline);
-%plot(xspline,yspline,'ro')
+%%xspline = 2:0.1:xmax;
+%%yspline = spline(path(:,1),path(:,2),xspline);
+%plot(path(:,1),path(:,2),'ro')
+%text(2, 2.5, ["max local curvature is : ",num2str(max(k))])
 
 endfunction

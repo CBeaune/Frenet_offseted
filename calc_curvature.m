@@ -1,4 +1,3 @@
-
 function k = calc_curvature(local_plan)
   k = [];
   for i=1:length(local_plan.x)-1
@@ -9,6 +8,7 @@ function k = calc_curvature(local_plan)
       dalpha-=pi;
     elseif dalpha<-pi/2
       dalpha+=pi;
+
     endif
     
     k = [k, dalpha/ds];

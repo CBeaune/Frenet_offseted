@@ -12,7 +12,7 @@ function local_plan = calc_global_path(local_plan,wx,wy)
       break;
     endif
     
-    [x,y] = getCartesian(local_plan.s(i),local_plan.d(i),wx,wy);
+    [x,y,heading] = getCartesian(local_plan.s(i),local_plan.d(i),wx,wy);
     local_plan.x = [local_plan.x, x];
     local_plan.y = [local_plan.y, y];
   endfor

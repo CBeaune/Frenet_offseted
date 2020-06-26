@@ -2,8 +2,8 @@ function optPath=PathSmoothing(path)
 optPath=path;%元のパスをコピー
 
 %平準化パラメータ
-alpha=0.5;
-beta=0.2;
+alpha = 0.5;
+beta = 0.2;
 
 tolerance=0.00001;%パスの変化量の閾値(変化量がこの値以下の時平滑化を終了)
 change=tolerance;%パスの位置の変化量
