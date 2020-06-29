@@ -51,6 +51,9 @@ endwhile
 
 %Heuristic Weight%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 weight = sqrt(3); %Try 1, 1.5, 2, 2.5
+alpha = 50.0;
+beta = 10.0;
+gamma = 1.0;
 %Increasing weight makes the algorithm greedier, and likely to take a
 %longer path, but with less computations.
 %weight = 0 gives Djikstra algorithm
@@ -59,9 +62,30 @@ weight = sqrt(3); %Try 1, 1.5, 2, 2.5
 for x = 1:size(MAP,1)
     for y = 1:size(MAP,2)
         if(MAP(x,y)~=inf)
-            %H(x,y) = weight*norm(goal-[x,y]);
-            %For d_sample = 0.25, a good heuristic is :
-            H(x,y) = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x)+ abs((1/d_sample-1/y)));
+        
+        if x~=1
+          A = abs(-ceil(ymax/2)+y)+1;
+        elseif y~=1
+          A = 90;
+        else
+          A = 0.0;
+        endif
+        
+        for x_i = x-5:x+5
+          for y_i = y-5:y+5
+            if (x_i<1||x_i>xmax || y_i<1||y_i>ymax)
+              continue
+            elseif MAP(x_i,y_i) == inf
+              B = 100;
+            else
+              B = 0.0;
+            endif
+          endfor
+        endfor
+        
+        
+        C = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x));
+            H(x,y) = alpha*A + beta*B + gamma*C ;
             
             
             G(x,y) = inf;
@@ -117,22 +141,31 @@ while(~isempty(openNodes))
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%            %if curvature>max_curvature skip
-%            s_1 = ((closedNodes(end,1)-1)*s_sample)+c_s;
-%            d_1 = -dmax+d_sample/2*(2*closedNodes(end,2)-1);
-%            %[x_1,y_1] = getCartesian(s_1,d_1,wx,wy);
+%          if size(closedNodes)(1)>3
+%            s0 = ((closedNodes(end-2,1)-1)*s_sample)+c_s;
+%            d0 = -dmax+d_sample/2*(2*closedNodes(end-2,2)-1);
 %            
-%            s0 = ((current(1)-1)*s_sample)+c_s;
-%            d0 = -dmax+d_sample/2*(2*current(2)-1);
-%            %[x0,y0] = getCartesian(s0,d0,wx,wy);
+%            s1 = ((closedNodes(end-1,1)-1)*s_sample)+c_s;
+%            d1 = -dmax+d_sample/2*(2*closedNodes(end-1,2)-1);
 %            
-%            s1 = ((x-1)*s_sample)+c_s;
-%            d1 = -dmax+d_sample/2*(2*y-1);
-%            %[x1,y1] = getCartesian(s1,d1,wx,wy);
-%            %R = circumcenter([x_1,y_1,0],[x0,y0,0],[x1,y1,0]);
-%            R = circumcenter([s_1,d_1,0],[s0,d0,0],[s1,d1,0]);
+%            s2 = (x*s_sample)+c_s;
+%            d2 = -dmax+d_sample/2*(2*y-1);
 %            
-%            if R < 1/max_curvature
-%              continue               
+%            [x0,y0] = getCartesian(s0,d0,wx,wy);
+%            [x1,y1] = getCartesian(s1,d1,wx,wy);
+%            X0 = [x0 x1];
+%            Y0 = [y0 y1];
+%            [x2,y2] = getCartesian(s2,d2,wx,wy);
+%%            [sd2,dd2] = getFrenet(x2,y2,X0,Y0,0.0);
+%            R = circumcenter([x0 y0 0],[x1 y1 0],[x2 y2 0]);
+%            
+%            if abs(R) >= max_curvature
+%%              dd2;
+%              continue
+%            endif
+%            
+%            
+%
 %            endif
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -5,6 +5,9 @@ function [frenet_s,frenet_d] = getFrenet(x,y,wx,wy,theta)
 	if next_wp == 1
 	
 		prev_wp  = length(wx);
+  elseif next_wp >= length(wx)
+    next_wp = length(wx);
+    prev_wp  = 1;
 	endif
 
 	   n_x = wx(next_wp)-wx(prev_wp);

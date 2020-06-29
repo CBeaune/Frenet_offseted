@@ -2,26 +2,14 @@
 close all;
 clear all;
 
-y = [  0.59669   0.61125   0.63730   0.67154   0.71063   0.75164   0.79323   0.83460   0.87558   0.91509   0.95071   0.97142   0.99058   1.00304   1.01635   1.02910   1.04766   1.07635 ...
-1.11110   1.14576   1.17418   1.19225   1.20384   1.21381   1.22291   1.23096   1.23832   1.24530   1.25157   1.25675   1.26083   1.26602   1.25990   1.24788   1.21966   1.18729 ...
- 1.16029   1.12520   0.89316];
- 
- x = [ 0.29465   0.34277   0.38870   0.43305   0.47648   0.51953   0.56248   0.60547   0.64854   0.69188   0.74140   0.78859   0.84181   0.89050   0.94014   0.98881   1.03663   1.08298 ...
- 1.12844   1.17391   1.22029   1.26819   1.31702   1.36610   1.41530   1.46466   1.51411   1.56362   1.61324   1.66301   1.71294   1.77346   1.82456   1.88612   1.93899   1.99310 ...
-2.04577   2.09918   2.17058];
+x = 0.0:0.1:6 ;                      %cartesian x coordinates (m)
+y = cos(1-x/2);  
 
 X = [x',y'];
 
 [L,R,k] = curvature(X);
 curv =[];
-figure;
-for i=2:length(R)-1
-  curv = [curv,1/R(i)];
-endfor
-plot(curv,'r-o')
-title('Curvature radius vs. cumulative curve length')
-xlabel L
-ylabel R
+
 figure;
 h = plot(x,y); grid on; axis equal
 set(h,'marker','.');
@@ -30,10 +18,66 @@ ylabel y
 title('2D curve with curvature vectors')
 hold on
 quiver(x',y',k(:,1),k(:,2));
-hold off
+hold on;
 
-curv2 = [];
-for i = 2:length(k(:,1))-1
-  curv2 = [curv2, hypot(k(i,1),k(i,2))];
+
+#Compute line for our trajectory
+x_start = x(1) ;
+y_start = y(1) ;
+x_goal = x(end);
+y_goal =  y(end);
+ds= 0.1;
+N=sqrt((x_goal-x_start)**2+(y_goal-y_start)**2)/ds;
+dx = (-x_start+x_goal)/N;
+dy = (-y_start+y_goal)/N;
+wx =[x_start];
+wy = [y_start];
+
+for i=2:N+1
+  wx = [wx, wx(i-1)+dx];
+  wy = [wy, wy(i-1)+dy];
 endfor
 
+
+wx = [wx,x_goal];
+wy = [wy,y_goal];
+  
+plot(wx,wy,'r-.');
+
+
+#Calc Frenet coordinates and calc derivate
+theta = [];
+for i = 1 : length(x)-1
+  theta = [theta, atan2(y(i+1)-y(i),x(i+1)-x(i))];
+endfor
+theta = [theta, theta(end)];
+S=[];D=[];
+%for i = 1 : length(x)-1
+%  [s,d] = getFrenet(x(i),y(i), wx,wy,theta(i));
+%  S = [S,s];
+%  D = [D,d];
+%endfor
+
+d_to_glob =[];
+for i=2:length(x)-1
+  [s_1,d_1] = getFrenet(x(i-1),y(i-1), wx,wy,theta(i));
+  [s0,d0] = getFrenet(x(i),y(i), wx,wy,theta(i));
+  [s1,d1] = getFrenet(x(i+1),y(i+1), wx, wy,theta(i));
+  d_to_glob = [d_to_glob, d0-(d1-d_1)];
+endfor
+
+figure;
+for i=2:length(R)-1
+  curv = [curv,(1/(R(i)))];
+endfor
+plot(curv,'r-o')
+title('Curvature radius (in red) vs. dd/ds (in blue)')
+xlabel waypoints
+
+hold on;
+plot(d_to_glob,'b-o');
+
+%figure;
+%%plot(curv,dd_ds,'r-o');
+%hold on ;
+%plot(dd_ds-curv);

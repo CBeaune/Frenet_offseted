@@ -9,7 +9,7 @@ function k = calc_curvature(local_plan)
     R = circumcenter(X0,X1,X2);
     k =[k, 1/R];
 
-  
+%  
 %    ds = local_plan.s(i+1)-local_plan.s(i);
 %    dalpha = local_plan.yaw(i+1)-local_plan.yaw(i);
 %    if dalpha>pi/2

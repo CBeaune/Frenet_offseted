@@ -4,13 +4,13 @@
 
 linear_vel = 0.22;      %linear velocity of the robot (m/s)
 robot_radius = 0.105;   % radius (m)
-max_curvature = 2.0;
-
+max_radius = 2.0;
+max_curvature = 1/max_radius;
 
 %------- Set global trajectory -------------------------------------------------
 
-wx = 0.0:1:6 ;                      %cartesian x coordinates (m)
-wy = cos(1-wx/10);                   %cartesian y coordinates (m)
+wx = 0.0:0.1:6 ;                      %cartesian x coordinates (m)
+wy = cos(1-wx/4);                   %cartesian y coordinates (m)
 [wx,wy] = getGlobalPlan(wx,wy);     % compute a waypoint every ds = 0.1m
 
 
@@ -55,22 +55,22 @@ dmax = 0.75;                 % d_max = 0.75 si on a mis les offsets à 0.5m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-infl_dist_side = 0.12; 
+infl_dist_side = robot_radius; 
              %dist to obstacle from side should be robot_radius+infl_dist_side
 
-infl_dist_front = 0.1;
+infl_dist_front = robot_radius;
              %dist to obstacle from front should be robot_radius+infl_dist_front
-infl_dist_back = 0.1; 
+infl_dist_back = robot_radius; 
              %dist to obstacle from back should be robot_radius+infl_dist_back
-n_s_local = s_sample/4  ;
+n_s_local = s_sample/3  ;
              %interval between two values in local plan             
 
                
 %------- Set obstacles along the global trajectory -----------------------------
 
 
-obstacle = [1 1.5 3 3.2 ;                           
-            cos(1-1/10)-0.1  cos(1-1.5/10)+0.1 cos(1-3/10)+0.1 cos(1-3.2/10)-0.1] ;  
+obstacle = [3  1;                           
+            cos(1-3/4) cos(1-1/4)  ] ;  
             
             
 %------- Plotting parameters ---------------------------------------------------
