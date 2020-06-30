@@ -89,13 +89,27 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   local_plan.d = -dspline;
   c_d = -local_plan.d(index);
   
+% heading  =[];
+%  for i=1:length(local_plan.d)-1
+%    delta = atan2(-local_plan.d(i+1)+local_plan.d(i),local_plan.s(i+1)-...
+%          local_plan.s(i));
+%    NextWps = closest_wps(local_plan.s(i+1),local_plan.d(i+1),wx,wy);
+%    PrevWps = closest_wps(local_plan.s(i),local_plan.d(i),wx,wy);
+%    theta = atan2(wy(NextWps)-wy(PrevWps),wx(NextWps)-wx(PrevWps));
+%    heading = [heading,delta+ theta];
+%  endfor
+%  
+%  heading = [heading, heading(end)];
+  
+  
   %-----Compute from Frenet coordinates to Cartesian coordinates----------------
   local_plan = calc_global_path(local_plan,wx,wy);
+%  local_plan.yaw = heading;
   c_x = local_plan.x(index);
   c_y = local_plan.y(index);
-  yaw = local_plan.yaw(index);
+  yaw = local_plan.yaw(index); %heading(index);
 
-%-----Calc curvature for the local path --------------------------------------
+ %-----Calc curvature for the local path --------------------------------------
 
   local_plan.curv = calc_curvature(local_plan);
   max_curv = max(local_plan.curv);
@@ -166,6 +180,6 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
 
 endwhile
 ################################################################################
-%-----End of the planning ------------------------------------------------------
+ %-----End of the planning -----------------------------------------------------
 
 text (2, 2, "GOAL REACHED !");

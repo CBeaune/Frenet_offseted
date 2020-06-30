@@ -11,6 +11,8 @@ function path = AStar(MAP,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,...
 %Define Number of Nodes
 xmax = M;
 ymax = N;
+thetamax = pi;
+theta = -thetamax:5*pi/180:thetamax;
 nb = -dmax:d_sample:dmax;
 
 %Start and Goal
@@ -50,7 +52,7 @@ endwhile
 %MAP(35:40,25) = inf;
 
 %Heuristic Weight%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-weight = sqrt(3); %Try 1, 1.5, 2, 2.5
+weight = sqrt(1.5); %Try 1, 1.5, 2, 2.5
 alpha = 50.0;
 beta = 10.0;
 gamma = 1.0;
@@ -109,9 +111,9 @@ openNodes = [start G(start(1),start(2)) F(start(1),start(2)) 0]; %[x y G F cameF
 %Solve
 solved = false;
 while(~isempty(openNodes))
-    
-    pause(0.001)
-    
+%    
+%    pause(0.001)
+%    
     %find node from open set with smallest F value
     [A,I] = min(openNodes(:,4));
     
