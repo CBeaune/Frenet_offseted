@@ -1,6 +1,6 @@
 #global plan --> get a waypoint every ds = 0.1 m 
 
-function [wpx,wpy] = getGlobalPlan(wx,wy);
+function [s,wpx,wpy] = getGlobalPlan(wx,wy);
 wpx = [wx(1)];
 wpy = [wy(1)];
 s = [0];

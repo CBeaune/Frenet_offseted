@@ -1,4 +1,4 @@
-function k = calc_curvature(local_plan)
+function [k,curv] = calc_curvature(local_plan)
   k = [];
   for i=2:length(local_plan.x)-1
     
@@ -6,8 +6,9 @@ function k = calc_curvature(local_plan)
     X1 = [local_plan.x(i),local_plan.y(i),0.0];
     X2 = [local_plan.x(i+1),local_plan.y(i+1),0.0];
     
-    R = circumcenter(X0,X1,X2);
-    k =[k, 1/R];
+    X = [local_plan.x',local_plan.y'];
+    [L,R,curv] = curvature(X);
+    k =[k, hypot(curv(i,1),curv(i,2)) ];
 
 %  
 %    ds = local_plan.s(i+1)-local_plan.s(i);

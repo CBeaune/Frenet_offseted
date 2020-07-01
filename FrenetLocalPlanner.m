@@ -61,8 +61,8 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   %----- use A* algorithm to pass the obstacle ---------------------------------
 %  path = AStar(gr,c_d,M,N,d_sample,dmax);
 %  
-  path = AStar(gr,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,max_curvature);
-  
+  path = AStar(gr,c_d,c_s,yaw,M,N,s_sample,d_sample,wx,wy,dmax,max_curvature);
+  %path(3)
   
   %-----Convert from matrix index to Frenet coordinates-------------------------
   for i = 1:length(path)
@@ -111,7 +111,9 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
 
  %-----Calc curvature for the local path --------------------------------------
 
-  local_plan.curv = calc_curvature(local_plan);
+  [curvature,vect] = calc_curvature(local_plan);
+  local_plan.curv = curvature;
+  %q = quiver(local_plan.x',local_plan.y',vect(:,1),vect(:,2));
   max_curv = max(local_plan.curv);
   
   
@@ -176,7 +178,8 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   endif
 
       
-  pause(0.5);
+  
+%  delete(q);
 
 endwhile
 ################################################################################

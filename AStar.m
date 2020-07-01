@@ -5,14 +5,14 @@
 %clc
 %clf
 
-function path = AStar(MAP,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,...
+function path = AStar(MAP,c_d,c_s,yaw,M,N,s_sample,d_sample,wx,wy,dmax,...
   max_curvature)
 
 %Define Number of Nodes
 xmax = M;
 ymax = N;
-thetamax = pi;
-theta = -thetamax:5*pi/180:thetamax;
+%thetamax = pi;
+%theta = -thetamax:5*pi/180:thetamax;
 nb = -dmax:d_sample:dmax;
 
 %Start and Goal
@@ -63,35 +63,12 @@ gamma = 1.0;
 %Heuristic Map of all nodes
 for x = 1:size(MAP,1)
     for y = 1:size(MAP,2)
-        if(MAP(x,y)~=inf)
         
-        if x~=1
-          A = abs(-ceil(ymax/2)+y)+1;
-        elseif y~=1
-          A = 90;
-        else
-          A = 0.0;
-        endif
-        
-        for x_i = x-5:x+5
-          for y_i = y-5:y+5
-            if (x_i<1||x_i>xmax || y_i<1||y_i>ymax)
-              continue
-            elseif MAP(x_i,y_i) == inf
-              B = 100;
-            else
-              B = 0.0;
-            endif
-          endfor
-        endfor
-        
-        
-        C = weight*(abs(ceil(ymax/2)-y) + abs(goal(1)-x));
-            H(x,y) = alpha*A + beta*B + gamma*C ;
+            H(x,y) = weight*hypot(x-goal(1),y-goal(2)) ;
             
             
             G(x,y) = inf;
-        endif
+        
     endfor
 endfor
 %Plotting%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,6 +84,7 @@ G(start(1),start(2)) = 0;
 F(start(1),start(2)) = H(start(1),start(2));
 closedNodes = [];
 openNodes = [start G(start(1),start(2)) F(start(1),start(2)) 0]; %[x y G F cameFrom]
+                       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Solve
 solved = false;
@@ -141,36 +119,6 @@ while(~isempty(openNodes))
                 continue
             endif
             
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%            %if curvature>max_curvature skip
-%          if size(closedNodes)(1)>3
-%            s0 = ((closedNodes(end-2,1)-1)*s_sample)+c_s;
-%            d0 = -dmax+d_sample/2*(2*closedNodes(end-2,2)-1);
-%            
-%            s1 = ((closedNodes(end-1,1)-1)*s_sample)+c_s;
-%            d1 = -dmax+d_sample/2*(2*closedNodes(end-1,2)-1);
-%            
-%            s2 = (x*s_sample)+c_s;
-%            d2 = -dmax+d_sample/2*(2*y-1);
-%            
-%            [x0,y0] = getCartesian(s0,d0,wx,wy);
-%            [x1,y1] = getCartesian(s1,d1,wx,wy);
-%            X0 = [x0 x1];
-%            Y0 = [y0 y1];
-%            [x2,y2] = getCartesian(s2,d2,wx,wy);
-%%            [sd2,dd2] = getFrenet(x2,y2,X0,Y0,0.0);
-%            R = circumcenter([x0 y0 0],[x1 y1 0],[x2 y2 0]);
-%            
-%            if abs(R) >= max_curvature
-%%              dd2;
-%              continue
-%            endif
-%            
-%            
-%
-%            endif
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
             
             %if object skip
             if (isinf(MAP(x,y)))
@@ -206,7 +154,8 @@ while(~isempty(openNodes))
             endif
             
             
-            newG = G(current(1),current(2)) + round(norm([current(1)-x,current(2)-y]));
+            newG = G(current(1),current(2))+round(norm([current(1)-x,current(2)-y]));
+            
             
             %if not in open set, add to open set
             if(isempty(A))
@@ -227,6 +176,8 @@ while(~isempty(openNodes))
             newF = newG + H(x,y);
             openNodes(A,3:5) = [newG newF size(closedNodes,1)];
         endfor
+      
+      
     endfor
 endwhile
 

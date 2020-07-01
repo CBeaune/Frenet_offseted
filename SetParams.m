@@ -11,7 +11,9 @@ max_curvature = 1/max_radius;
 
 wx = 0.0:0.1:6 ;                      %cartesian x coordinates (m)
 wy = cos(1-wx/4);                   %cartesian y coordinates (m)
-[wx,wy] = getGlobalPlan(wx,wy);     % compute a waypoint every ds = 0.1m
+[S,wx,wy] = getGlobalPlan(wx,wy) ;    % compute a waypoint every ds = 0.1m
+
+
 
 
 %------- Initial pose and Frenet coordinates -----------------------------------
