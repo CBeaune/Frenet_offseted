@@ -9,7 +9,6 @@ function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample,infl_dist_side,
   dd = d_sample/2;
   M = s_hor/ds;
   N = (dmax)/dd;
-  theta = -pi/2:pi/2:pi/2;
   
   n_infl_side = ceil((infl_dist_side+robot_radius)/d_sample);
   n_infl_front = ceil((infl_dist_front+robot_radius)/ds);
@@ -18,7 +17,7 @@ function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample,infl_dist_side,
   nb = -dmax:d_sample:dmax;
   
 %   size(theta)
-   gr = zeros(M,N,length(theta));
+   gr = zeros(M,N);
   %gr = zeros(M,N);
   for obst = obstacle 
     %Convert from Frenet to matrix index
@@ -36,13 +35,13 @@ function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample,infl_dist_side,
     x = floor((s_obst-c_s)/ds)+1;
     if (1<=y && y<=N && 1<=x && x<=M)
       
-      gr(x,y,:) =  inf; 
+      gr(x,y) =  inf; 
       for d = y-n_infl_side:y+n_infl_side
         for s = x-n_infl_front:x+n_infl_back  
           if (d<1||d>N||s<1||s>M)
                 continue
               else
-                gr(s,d,:) =  inf; 
+                gr(s,d) =  inf; 
             endif
           
         endfor

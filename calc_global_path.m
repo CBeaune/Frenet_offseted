@@ -6,7 +6,7 @@ function local_plan = calc_global_path(local_plan,wx,wy)
   endfor
   
   
-  for i=1:length(local_plan.s)
+  for i=1:length(local_plan.s)-1
     
     if local_plan.s(i)>maps_s(end)
       break;

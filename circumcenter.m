@@ -21,6 +21,7 @@ function [R,M,k] = circumcenter(A,B,C)
   end
   E = cross(D,B-A);
   F = cross(D,C-A);  
+  
   G = (b^2*E-c^2*F)/norm(D)^2/2;
   M = A + G;
   R = norm(G);  % Radius of curvature

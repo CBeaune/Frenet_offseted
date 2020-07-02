@@ -10,11 +10,12 @@ clear all;
 close all;
 
 %---- set all parameters -------------------------------------------------------
-SetParams;  
+SetParams;
+plot_type = "F";   %"A"; %
 hold on;
 
 %---- Compute local path and plot ---------------------------------------------
-pause(1.0);
+%pause(1.0);
 FrenetLocalPlanner;
 
 ################################################################################

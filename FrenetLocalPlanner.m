@@ -1,23 +1,26 @@
 
 
-
+K=[];
 %-----Plotting------------------------------------------------------------------
-
-ob = plot(obstacle(1,:),obstacle(2,:),'o','markersize',(robot_radius+...
-    infl_dist_front)*28.35,'markerfacecolor','k','markeredgecolor','k');
-    
-[wxl,wyl,wxr,wyr] = ComputeTraj(wx,wy);
-
-glob = plot(wx,wy,'b');
-hold on;
-right = plot(wxr,wyr,'c');
-hold on;
-left = plot(wxl,wyl,'g');
-axis equal;
-
-start = plot(wx(1),wy(1),'ro','markerfacecolor','r');
-goal = plot(wx(end),wy(end),'go','markerfacecolor','g');
-
+if plot_type == "F"
+  ob = plot(obstacle(1,:),obstacle(2,:),'o','markersize',(robot_radius+...
+      infl_dist_front)*28.35,'markerfacecolor','k','markeredgecolor','k');
+      
+  [wxl,wyl,wxr,wyr] = ComputeTraj(wx,wy);
+  
+  X=[];
+  Y=[];
+  
+  glob = plot(wx,wy,'b');
+  hold on;
+  right = plot(wxr,wyr,'c');
+  hold on;
+  left = plot(wxl,wyl,'g');
+  axis equal;
+  hold on;
+  start = plot(wx(1),wy(1),'ro','markerfacecolor','r');
+  goal = plot(wx(end),wy(end),'go','markerfacecolor','g');
+  hold on
   A_x = -(infl_dist_back+robot_radius)*cos(yaw)+...
   (infl_dist_side+robot_radius)*sin(yaw)+c_x;
   A_y = -(infl_dist_back+robot_radius)*sin(yaw)-...
@@ -45,8 +48,9 @@ goal = plot(wx(end),wy(end),'go','markerfacecolor','g');
   
   j = plot(0,0);
   k = plot(0,0);
-
+  
   r = text (2, 2.5, ["max curvature is : 0"] );
+endif
 
 ################################################################################  
 %-----Begin of the planning ----------------------------------------------------  
@@ -56,12 +60,16 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   %----- Compute local occupancy grid-------------------------------------------
   [M,N,gr] = makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample,infl_dist_side,
   infl_dist_front,infl_dist_back,robot_radius);
+  curv = calc_curvature(wx,wy);
   
+
+    
   
   %----- use A* algorithm to pass the obstacle ---------------------------------
 %  path = AStar(gr,c_d,M,N,d_sample,dmax);
 %  
-  path = AStar(gr,c_d,c_s,yaw,M,N,s_sample,d_sample,wx,wy,dmax,max_curvature);
+  path = AStar(gr,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,curv,plot_type,...
+      curv_weight);
   %path(3)
   
   %-----Convert from matrix index to Frenet coordinates-------------------------
@@ -83,7 +91,7 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   dspline = spline(path(:,1),path(:,2),sspline);
 
   
-  index = ceil(1/n_s_local*s_sample)+1;
+  index = ceil(1/n_s_local*s_sample)+2;
   local_plan.s = sspline;
   c_s = local_plan.s(index);
   local_plan.d = -dspline;
@@ -106,20 +114,26 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   local_plan = calc_global_path(local_plan,wx,wy);
 %  local_plan.yaw = heading;
   c_x = local_plan.x(index);
+ % X = [X,c_x];
   c_y = local_plan.y(index);
+  %Y = [Y,c_y];
   yaw = local_plan.yaw(index); %heading(index);
 
  %-----Calc curvature for the local path --------------------------------------
 
-  [curvature,vect] = calc_curvature(local_plan);
+  curvature = calc_curvature(local_plan.x,local_plan.y);
   local_plan.curv = curvature;
   %q = quiver(local_plan.x',local_plan.y',vect(:,1),vect(:,2));
   max_curv = max(local_plan.curv);
   
   
-  %-----Plotting----------------------------------------------------------------
-  
-  delete(j);delete(k);delete(r);
+%  %-----Plotting----------------------------------------------------------------
+
+if plot_type == "F" 
+  delete(j);
+  delete(k);
+  delete(r);
+  hold on;
   delete(AB);delete(B_C);delete(CD);delete(DA);
   t = linspace(0,2*pi,100)'; 
   circsx = robot_radius.*cos(t) + c_x; 
@@ -156,12 +170,13 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   DA = line ([D_x A_x], [D_y A_y], "linestyle", "--", "color", "r");
   
   hold on;
-  legend([l j AB ob glob left right start goal],{...
-      'center of robot at eachiteration','frenet local plan'...
-      ,'security zone around robot','obstacles',"global trajectory",...
-      "global trajectory with an offset to the left side",...
-      "global trajectory with an offset to the right side", "start position"...
-      "goal position"},'Location','southwest');
+  
+%  legend([l j AB ob glob left right start goal],{...
+%      'center of robot at eachiteration','frenet local plan'...
+%      ,'security zone around robot','obstacles',"global trajectory",...
+%      "global trajectory with an offset to the left side",...
+%      "global trajectory with an offset to the right side", "start position"...
+%      "goal position"},'Location','southwest');
       
 
   title(['Local planning start ! Speed is ',num2str(linear_vel),...
@@ -170,19 +185,27 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
 
   if max_curv>max_curvature 
     r = text (2, 2.5, ["max local curvature = ",num2str(max_curv),...
-    " >  max curvature =  " ,num2str(max_curvature)],'Color', 'r' ); 
+    " >  max curvature =  " ,num2str(1/max_curvature)],'Color', 'r' ); 
     
   else
     r = text (2, 2.5, ["max local curvature is : ",num2str(max_curv)] );
 
   endif
 
-      
-  
-%  delete(q);
+  hold on;
+  pause(0.05);
+
+endif
+  K = [K, max_curv];
+
+
 
 endwhile
 ################################################################################
  %-----End of the planning -----------------------------------------------------
 
 text (2, 2, "GOAL REACHED !");
+disp("goal reached !");
+figure(2)
+plot(K,"ro-");
+title(["max curvature with curv weight = ",num2str(curv_weight)]);
