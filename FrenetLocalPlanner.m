@@ -98,7 +98,7 @@ offset=0;
   index = ceil(1/n_s_local*s_sample)+1;
   local_plan.s = sspline;
   c_s = local_plan.s(index);
-  local_plan.d = dspline;
+  local_plan.d = -dspline;
   c_d = -local_plan.d(index);
   
 % heading  =[];

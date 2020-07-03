@@ -8,9 +8,9 @@ min_radius = 2.0;
 max_curvature = 1/min_radius;
 
 %------- Set global trajectory -------------------------------------------------
-t = 0.0:0.01:5;
-wx = 5*cos(t/2) ;                   %cartesian x coordinates (m)
-wy = 5*sin(t/2);                %cartesian y coordinates (m)
+t = pi/4:0.01:7*pi/4;
+wx = 5*cos(t) ;                   %cartesian x coordinates (m)
+wy = 5*sin(t);                %cartesian y coordinates (m)
 [S,wx,wy] = getGlobalPlan(wx,wy) ;    % compute a waypoint every ds = 0.1m
 
 
@@ -57,10 +57,10 @@ dmax = 0.75;                 % d_max = 0.75 si on a mis les offsets à 0.5m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-infl_dist_side = robot_radius+0.08; 
+infl_dist_side = robot_radius; 
              %dist to obstacle from side should be robot_radius+infl_dist_side
 
-infl_dist_front = robot_radius;
+infl_dist_front = robot_radius+0.15;
              %dist to obstacle from front should be robot_radius+infl_dist_front
 infl_dist_back = robot_radius; 
              %dist to obstacle from back should be robot_radius+infl_dist_back
@@ -71,8 +71,8 @@ n_s_local = s_sample/1 ;
 %------- Set obstacles along the global trajectory -----------------------------
 
 
-obstacle = [5*cos(1) 3  ;                           
-               5*sin(1)-0.1 2   ] ;  
+obstacle = [wx(100) wx(200)  ;                           
+               wy(100) wy(200)  ] ;  
             
             
 %------- Plotting parameters ---------------------------------------------------

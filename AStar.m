@@ -176,14 +176,14 @@ while(~isempty(openNodes))
             endif
           
             if x==current(1)
-              R=2.2;
+              R=1*0.22;
             elseif x == current(1)-1
-              R=2.2;
+              R=1*0.22;
             else
               R = 0.1*0.22*(abs((y - current(2))/(x-current(1))));
           endif
 %          
-            newG = G(current(1),current(2))+round(norm([current(1)-x,current(2)-y]));
+            newG = G(current(1),current(2))+round(norm([current(1)-x,current(2)-y]))+R;
             
             
             %if not in open set, add to open set
