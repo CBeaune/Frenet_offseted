@@ -8,9 +8,9 @@ min_radius = 2.0;
 max_curvature = 1/min_radius;
 
 %------- Set global trajectory -------------------------------------------------
-
-wx = 0.0:0.1:5 ;                      %cartesian x coordinates (m)
-wy = cos(1-wx/2);                   %cartesian y coordinates (m)
+t = 0.0:0.01:5;
+wx = 5*cos(t/2) ;                   %cartesian x coordinates (m)
+wy = 5*sin(t/2);                %cartesian y coordinates (m)
 [S,wx,wy] = getGlobalPlan(wx,wy) ;    % compute a waypoint every ds = 0.1m
 
 
@@ -31,7 +31,7 @@ curv_weight= 5;
 
 %------- Set occupancy grid  ---------------------------------------------------
 
-s_sample = 2/40;              % set size of horizontal cells
+s_sample = 2/20;              % set size of horizontal cells
 d_sample = 1.5/15;              % set size of vertical cells
 dmax = 0.75;                 % d_max = 0.75 si on a mis les offsets à 0.5m
 
@@ -57,22 +57,22 @@ dmax = 0.75;                 % d_max = 0.75 si on a mis les offsets à 0.5m
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-infl_dist_side = robot_radius; 
+infl_dist_side = robot_radius+0.08; 
              %dist to obstacle from side should be robot_radius+infl_dist_side
 
 infl_dist_front = robot_radius;
              %dist to obstacle from front should be robot_radius+infl_dist_front
 infl_dist_back = robot_radius; 
              %dist to obstacle from back should be robot_radius+infl_dist_back
-n_s_local = s_sample/1  ;
+n_s_local = s_sample/1 ;
              %interval between two values in local plan             
 
                
 %------- Set obstacles along the global trajectory -----------------------------
 
 
-obstacle = [ 1.5 3 5 ;                           
-               cos(1-1.5/2)-0.1 cos(1-3/2)+0.1 cos(1-5/2)-0.4 ] ;  
+obstacle = [5*cos(1) 3  ;                           
+               5*sin(1)-0.1 2   ] ;  
             
             
 %------- Plotting parameters ---------------------------------------------------

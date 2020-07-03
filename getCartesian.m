@@ -12,7 +12,6 @@ function [x,y,heading] = getCartesian(s,d,wx,wy)
 	
 		prev_wp++;
 	endwhile
-  
   if prev_wp >= length(wx)
     prev_wp=prev_wp-length(wx)+1;
   endif

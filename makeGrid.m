@@ -22,6 +22,10 @@ function [M,N,gr]=makeGrid(wx,wy,obstacle,c_s,s_sample,d_sample,infl_dist_side,
   for obst = obstacle 
     %Convert from Frenet to matrix index
     [s_obst,d_obst] = getFrenet(obst(1),obst(2),wx,wy,0.0);
+    if abs(d_obst)>dmax
+      continue
+    endif
+    
     for index = 1:length(nb)-1
       if nb(index) <= d_obst && d_obst<= nb(index+1)
         y = index;

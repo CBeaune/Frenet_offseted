@@ -1,7 +1,7 @@
 function local_plan = calc_global_path(local_plan,wx,wy)
   maps_s = [0.0];
-  for i=2:length(wx)
-    si  = maps_s(i-1)+hypot(wx(i)-wx(i-1),wy(i)-wy(i-1));
+  for i=1:length(wx)-1
+    si  = maps_s(i)+hypot(wx(i+1)-wx(i),wy(i+1)-wy(i));
     maps_s = [maps_s, si];
   endfor
   
@@ -9,6 +9,7 @@ function local_plan = calc_global_path(local_plan,wx,wy)
   for i=1:length(local_plan.s)-1
     
     if local_plan.s(i)>maps_s(end)
+      %disp("too long");
       break;
     endif
     

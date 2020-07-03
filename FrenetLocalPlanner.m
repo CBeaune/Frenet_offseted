@@ -54,7 +54,8 @@ endif
 
 ################################################################################  
 %-----Begin of the planning ----------------------------------------------------  
-while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
+reroute =0;
+while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance && reroute~=1
   
   
   %----- Compute local occupancy grid-------------------------------------------
@@ -68,10 +69,12 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   %----- use A* algorithm to pass the obstacle ---------------------------------
 %  path = AStar(gr,c_d,M,N,d_sample,dmax);
 %  
-  path = AStar(gr,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,curv,plot_type,...
-      curv_weight);
-  %path(3)
-  
+
+%for offset =0:8;
+offset=0;
+ path = AStar(gr,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,curv,plot_type,...
+      curv_weight,mod(offset+8,9)-8);  
+      
   %-----Convert from matrix index to Frenet coordinates-------------------------
   for i = 1:length(path)
      path(i,2) = -dmax+d_sample/2*(2*path(i,2)-1);
@@ -79,22 +82,23 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   endfor
   test_path = path;
   local_plan = FrenetPath;
+  if length(path)==0
+    continue
+  endif
+  
   
   
   %-----Smooth the path --------------------------------------------------------
-%  sspline = c_s:0.03:c_s+2.0;
-%  dspline = spline(path(:,1),path(:,2),sspline);
-%  path = [ssplie
 
   path = PathSmoothing(path);
   sspline = path(1,1):n_s_local:path(end,1);
   dspline = spline(path(:,1),path(:,2),sspline);
 
   
-  index = ceil(1/n_s_local*s_sample)+2;
+  index = ceil(1/n_s_local*s_sample)+1;
   local_plan.s = sspline;
   c_s = local_plan.s(index);
-  local_plan.d = -dspline;
+  local_plan.d = dspline;
   c_d = -local_plan.d(index);
   
 % heading  =[];
@@ -124,12 +128,23 @@ while hypot(c_x-wx(end),c_y-wy(end))>goal_tolerance
   curvature = calc_curvature(local_plan.x,local_plan.y);
   local_plan.curv = curvature;
   %q = quiver(local_plan.x',local_plan.y',vect(:,1),vect(:,2));
-  max_curv = max(local_plan.curv);
   
-  
+  max_curv = max(abs(local_plan.curv));
+  K = [K;max_curv];
+%if max_curv<max_curvature
+%  break;
+%  
+%endif
+%
+%if offset == 8
+%  reroute=1;
+%endif
+%
+%endfor
+
 %  %-----Plotting----------------------------------------------------------------
 
-if plot_type == "F" 
+if plot_type == "F" &&reroute~=1
   delete(j);
   delete(k);
   delete(r);
@@ -183,12 +198,14 @@ if plot_type == "F"
     ' m/s', ' (speed display x', num2str(speed_display), ')'])    
    
 
-  if max_curv>max_curvature 
+  if abs(max_curv)>max_curvature 
     r = text (2, 2.5, ["max local curvature = ",num2str(max_curv),...
-    " >  max curvature =  " ,num2str(1/max_curvature)],'Color', 'r' ); 
+    " >  max curvature =  " ,num2str(max_curvature),"    offset is : ",...
+    num2str(offset)],'Color', 'r' ); 
     
   else
-    r = text (2, 2.5, ["max local curvature is : ",num2str(max_curv)] );
+    r = text (2, 2.5, ["max local curvature is : ",num2str(max_curv),"    offset is : ",...
+    num2str(offset)] );
 
   endif
 
@@ -196,16 +213,21 @@ if plot_type == "F"
   pause(0.05);
 
 endif
-  K = [K, max_curv];
+  %K = [K, max_curv];
 
 
 
 endwhile
-################################################################################
- %-----End of the planning -----------------------------------------------------
+if reroute ==1
+  text(2, 2, "No feasible trajectory found");
+else
+   %-----End of the planning -----------------------------------------------------
 
 text (2, 2, "GOAL REACHED !");
 disp("goal reached !");
 figure(2)
 plot(K,"ro-");
 title(["max curvature with curv weight = ",num2str(curv_weight)]);
+endif
+
+################################################################################

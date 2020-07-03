@@ -24,11 +24,26 @@ function k = calc_curvature(x,y)
 %    k = [k, 1/R];
 %  endfor
 %  k = [k,k(end)];
-Dx = gradient(x,0.1);
-Dy = gradient(y,0.1);
-Dx_2 = gradient(Dx);
-Dy_2 = gradient(Dy);
-k = sqrt(Dx_2.^2+Dy_2.^2);
-  
+%Dx = gradient(x,0.1);
+%Dy = gradient(y,0.1);
+%Dx_2 = gradient(Dx,0.1);
+%Dy_2 = gradient(Dy,0.1);
+%k = sqrt(Dx_2.^2+Dy_2.^2);
+
+k=[];yaw=[];ds=[];
+for i=1:length(x)-1
+  dx = x(i + 1) - x(i);
+  dy = y(i + 1) - y(i);
+  yaw =[yaw,atan2(dy, dx)];
+  ds = [ds,hypot(dx, dy)];
+endfor
+yaw = [yaw,yaw(end)];
+ds = [ds,ds(end)];
+
+for i=1:length(yaw)-1
+  k = [k, (yaw(i+1)-yaw(i))/ds(i)];
+endfor
+
+%  
 endfunction
 

@@ -6,7 +6,7 @@
 %clf
 
 function path = AStar(MAP,c_d,c_s,M,N,s_sample,d_sample,wx,wy,dmax,curv,
-  plot_type,curv_weight)
+  plot_type,curv_weight,offset)
 hold off;
 
 %Define Number of Nodes
@@ -27,15 +27,15 @@ for index = 1:length(nb)-1
  
 
 start = [1,start_d];
-goal = [xmax,ceil(N/2)];
 
 k = 0;
-while ceil(N/2)+k < N && ceil(N/2)-k >1
-  if MAP(xmax,ceil(N/2)-k)~= inf
-    goal = [xmax,ceil(N/2)-k];
+goal = [xmax,ceil(N/2)-k-offset];
+while ceil(N/2)+k-offset < N && ceil(N/2)-k-offset >1
+  if MAP(xmax,ceil(N/2)-k-offset)~= inf
+    goal = [xmax,ceil(N/2)-k-offset];
     break;
-  elseif MAP(xmax,ceil(N/2)+k)~= inf
-    goal = [xmax,ceil(N/2)+k];
+  elseif MAP(xmax,ceil(N/2)+k-offset)~= inf
+    goal = [xmax,ceil(N/2)+k-offset];
     break;
   endif
   k++;
@@ -54,7 +54,7 @@ endwhile
 %MAP(35:40,25) = inf;
 
 %Heuristic Weight%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-weight = sqrt(2); %Try 1, 1.5, 2, 2.5
+weight = sqrt(2.5); %Try 1, 1.5, 2, 2.5
 
 alpha = 50.0;
 beta = 10.0;
@@ -148,107 +148,7 @@ while(~isempty(openNodes))
                 continue
             endif
             
-            R = 0;
-            
-%            %if curv>thres discard certain nodes
-
-            if (L(x,y)>thres )
-              if  length(closedNodes(:,1))>3
-%x
-%y
-%current(1)
-%current(2)
-%closedNodes(end-1,1)
-%closedNodes(end-1,2)
-
-                if (closedNodes(end-1,1)-current(1)==-1 && closedNodes(end-1,2)-current(2)==1 || ...
-                      closedNodes(end-1,1)-current(1)==1 && closedNodes(end-1,2)-current(2)==-1)
-                  if x == current(1)+1 && y == current(2)+1
-                 
-                    R = 1/thres;
-                    if plot_type == "A"
-                      plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                      hold on;
-                    endif;
-                
-                  elseif x == current(1)-1 && y == current(2)-1
-               
-                    R =1/thres;
-                  
-                    if plot_type == "A"
-                    plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                    hold on;
-                  endif
-               endif
-              
-              
-                
-              elseif (closedNodes(end-1,1)-current(1)==-1 && closedNodes(end-1,2)-current(2)==-1 ||...
-                closedNodes(end-1,1)-current(1)==1 && closedNodes(end-1,2)-current(2)==1)
-                if x == current(1)-1  && y == current(2)+1
-                 
-                  R =1/thres;
-                  if plot_type == "A"
-                    plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                    hold on;
-                  endif
-                  
-                elseif x == current(1)+1  && y == current(2)-1
-                   
-                  R =1/thres;
-                  if plot_type == "A"
-                  plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                  hold on;
-                  endif
-                endif
-              
-              
-              
-              
-                
-              elseif closedNodes(end-1,1)-current(1)==-1 && closedNodes(end-1,2)-current(2)==0
-                if  y == current(2)+1
-                 
-                   R=1/thres;
-                  if plot_type == "A"
-                    plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                    hold on;
-                  endif
-                  
-                elseif  y == current(2)-1
-                   
-                   R=1/thres;
-                  if plot_type == "A"
-                    plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                    hold on;
-                  endif
-                endif
              
-              
-                
-              elseif closedNodes(end-1,1)-current(1)==0 && ...
-                (closedNodes(end-1,2)-current()==-1 || closedNodes(end-1,2)-current(2)==1)
-                if x == current(1)-1  
-                 
-                  R =1/thres;
-                  if plot_type == "A"
-                    plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                    hold on;
-                  endif
-                  
-                elseif x == current(1)+1  
-                   
-                  R =1/thres;
-                  if plot_type == "A"
-                    plot3(x,y,H(x,y),'o','color','r','MarkerFaceColor','r')
-                    hold on;
-                  endif
-                endif
-              
-             endif
-          endif
-        endif
-        
           
             
             
@@ -275,8 +175,15 @@ while(~isempty(openNodes))
                 endfor
             endif
           
-            
-            newG = G(current(1),current(2))+round(norm([current(1)-x,current(2)-y]))+R;
+            if x==current(1)
+              R=2.2;
+            elseif x == current(1)-1
+              R=2.2;
+            else
+              R = 0.1*0.22*(abs((y - current(2))/(x-current(1))));
+          endif
+%          
+            newG = G(current(1),current(2))+round(norm([current(1)-x,current(2)-y]));
             
             
             %if not in open set, add to open set
